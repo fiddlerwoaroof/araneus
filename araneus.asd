@@ -7,6 +7,7 @@
   :depends-on (#:anaphora
                #:alexandria
                #:serapeum
+               #:ningle
                #:cl-mustache)
   :serial t
   :components ((:file "package")
