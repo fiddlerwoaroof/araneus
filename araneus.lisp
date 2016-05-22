@@ -13,7 +13,7 @@
 
 (defgeneric view (name model)
   (:documentation "specialized on NAME with an EQL-specializer. This generic function
-                   renders the model picked out by the controller. Normally, this is 
+                   renders the model picked out by the controller. Normally, this is
                    specialized using the DEFINE-VIEW macr"))
 
 (defmacro setf1 (&body body)
@@ -29,18 +29,48 @@
            (loop for ((target &key method) callback) in routes
                  collect `((ningle:route ,app ,target :method ,(or method :GET)) ,callback)))))
 
- 
+
+(defvar *view-name*)
 (defmacro as-route (name &rest r &key &allow-other-keys)
   "Create a lambda directing requests to the route for NAME.  This uses the
    generic function RUN-ROUTE internally whose default implementation relies on
    appropriate implementations of CONTROLLER and VIEW. The RUN-ROUTE method receives
    the parameters ningle passes to other functions as a first parameter, and then it
    receives a bunch of arguments according to the arguments passed to this macro."
-  `(lambda (params) (run-route ,name params ,@r)))
+  (alexandria:once-only (name)
+    `(lambda (params)
+       (run-route ,name params ,@r))))
 
+(defun %compose-route (controller controller-args view)
+  (declare (optimize (debug 3) (speed 0) (space 0) (safety 3)))
+  (lambda (params)
+    (declare (optimize (debug 3) (speed 0) (space 0) (safety 3)))
+    (apply #'view
+           (list view
+                 (apply #'controller
+                        (list* controller
+                               params
+                               controller-args))))))
+
+(defmacro compose-route ((controller &rest controller-args) view)
+  `(%compose-route ',controller ,controller-args ',view))
+
+(defun switch-view (view-name)
+  (format t "~&Switching view to: ~a~&" view-name)
+  (alexandria:if-let ((switch-view-restart (find-restart 'switch-view)))
+    (invoke-restart switch-view-restart view-name)
+    (cerror "ignore this error"
+            "Can only call switch-view while the route is being processed")))
 
 (defmethod run-route (name params &rest r)
-  (view name (apply #'controller (list* name params r))))
+  (let ((*view-name* name))
+    (fw.lu:let-each (:be *)
+      (list* name params r)
+      (restart-bind ((switch-view (lambda (new-view)
+                                    (format t "~%SWITCHING VIEW: ~a" new-view)
+                                    (setf *view-name* new-view))))
+        (apply #'controller *))
+      (view *view-name* *))))
 
 ; The default controller just passes its parameters directly to the view
 (defmethod controller (name params &key)

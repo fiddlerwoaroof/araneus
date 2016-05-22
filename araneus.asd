@@ -8,6 +8,7 @@
                #:alexandria
                #:serapeum
                #:ningle
+               #:fwoar.lisputils
                #:cl-mustache)
   :serial t
   :components ((:file "package")

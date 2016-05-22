@@ -6,4 +6,8 @@
            #:controller #:view #:run-route #:mustache-view #:render-mustache
            #:setf1))
 
+(defpackage #:araneus.form
+  (:use #:cl)
+  (:export ))
+
 
