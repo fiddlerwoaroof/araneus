@@ -16,21 +16,24 @@
                    renders the model picked out by the controller. Normally, this is
                    specialized using the DEFINE-VIEW macr"))
 
-(defmacro setf1 (&body body)
-  "Make setf a bit nicer to use with paredit"
-  (list* 'setf (apply #'append body)))
-
 (defmacro defroutes (app &body routes)
   "Define a set of routes for given paths. the ROUTES parameter expects this format:
    ((\"/path/to/{route}\" :method :POST) route-callback) the AS-ROUTE macro helps one
    avoid binding function values to the route for flexibility."
   (alexandria:once-only (app)
-    (list* 'setf1
-           (loop for ((target &key method) callback) in routes
-                 collect `((ningle:route ,app ,target :method ,(or method :GET)) ,callback)))))
+    `(setfs
+       ,@(loop for ((target &key method) callback) in routes
+               collect `((ningle:route ,app ,target :method ,(or method :GET)) ,callback)))))
 
 
 (defvar *view-name*)
+(defun call-current-view (model)
+  "Call the currently running view with a new model.
+   
+   Useful if one view name is specialized many times on different model classes: the controller can
+   pass the container and then the view can recall itself on the contained items."
+  (view *view-name* model))
+
 (defmacro as-route (name &rest r &key &allow-other-keys)
   "Create a lambda directing requests to the route for NAME.  This uses the
    generic function RUN-ROUTE internally whose default implementation relies on
@@ -91,6 +94,14 @@
       (mustache:render* template data))))
 
 
+(defmacro define-spinneret-view (name (model) &body body)
+  (let* ((declarations (when (eq (caar body) 'declare) (car body)))
+         (body (if declarations (cdr body) body)))
+    `(define-view ,name (,model)
+       ,declarations
+       (spinneret:with-html-string
+         ,@body))))
+
 (defmacro mustache ((template lambda-list data) &body body)
   "Template specifies the template to be render, lambda-list is used to destructure data
    and body transforms the destructured data into an alist for use in the template"
@@ -109,4 +120,5 @@
       `(define-view ,name (,model)
          (mustache (,template ,lambda-list ,model)
                    ,@body)))))
+
 

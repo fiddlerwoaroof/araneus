@@ -9,6 +9,7 @@
                #:serapeum
                #:ningle
                #:fwoar.lisputils
+               #:spinneret
                #:cl-mustache)
   :serial t
   :components ((:file "package")
