@@ -48,12 +48,13 @@
   (declare (optimize (debug 3) (speed 0) (space 0) (safety 3)))
   (lambda (params)
     (declare (optimize (debug 3) (speed 0) (space 0) (safety 3)))
-    (apply #'view
-           (list view
-                 (apply #'controller
-                        (list* controller
-                               params
-                               controller-args))))))
+    (let ((*view-name* view))
+      (apply #'view
+	     (list view
+		   (apply #'controller
+			  (list* controller
+				 params
+				 controller-args)))))))
 
 (defmacro compose-route ((controller &rest controller-args) view)
   `(%compose-route ',controller ,controller-args ',view))
