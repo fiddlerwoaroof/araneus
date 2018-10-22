@@ -1,9 +1,9 @@
 ;;;; araneus.asd
 
 (asdf:defsystem #:araneus
-  :description "Describe araneus here"
-  :author "Your Name <your.name@example.com>"
-  :license "Specify license here"
+  :description "Another web framework"
+  :author "Edward Langley <el@elangley.org>"
+  :license "MIT"
   :depends-on (#:anaphora
                #:alexandria
                #:serapeum
