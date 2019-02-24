@@ -8,7 +8,7 @@
                #:alexandria
                #:serapeum
                #:ningle
-               #:fwoar.lisputils
+               #:fwoar-lisputils
                #:spinneret
                #:cl-mustache)
   :serial t

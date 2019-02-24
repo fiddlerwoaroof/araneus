@@ -80,7 +80,7 @@
 (defmethod controller (name params &key)
   params)
 
-(defmacro define-controller (name (params &rest r &key &allow-other-keys) &body body)
+(defmacro define-controller (name (params &rest r) &body body)
   `(defmethod controller ((name (eql ',name)) ,params &key ,@r)
      ,@body))
 
