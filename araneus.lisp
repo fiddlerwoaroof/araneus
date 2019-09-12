@@ -16,6 +16,12 @@
                    renders the model picked out by the controller. Normally, this is
                    specialized using the DEFINE-VIEW macr"))
 
+(defgeneric routes (app)
+  (:method-combination progn)
+  (:method :around (app)
+    (call-next-method)
+    app))
+
 (defmacro defroutes (app &body routes)
   "Define a set of routes for given paths. the ROUTES parameter expects this format:
    ((\"/path/to/{route}\" :method :POST) route-callback) the AS-ROUTE macro helps one
