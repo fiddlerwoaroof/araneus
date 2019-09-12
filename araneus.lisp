@@ -16,7 +16,18 @@
                    renders the model picked out by the controller. Normally, this is
                    specialized using the DEFINE-VIEW macr"))
 
+
+(defgeneric styles (route)
+  (:documentation "if you use class-based roues, this method provides
+  a hook for generating CSS files with the most specific selectors
+  last: it returns a list via the APPEND method complication, suitable
+  for use with a system like lass <https://shinmera.github.io/LASS>")
+  (:method-combination append :most-specific-last))
+
 (defgeneric routes (app)
+  (:documentation "defines routes for some object that represents an
+  app: PROGN method combination, with an around method that ensures
+  that this returns the app.")
   (:method-combination progn)
   (:method :around (app)
     (call-next-method)
@@ -27,9 +38,8 @@
    ((\"/path/to/{route}\" :method :POST) route-callback) the AS-ROUTE macro helps one
    avoid binding function values to the route for flexibility."
   (alexandria:once-only (app)
-    `(setfs
-       ,@(loop for ((target &key method) callback) in routes
-               collect `((ningle:route ,app ,target :method ,(or method :GET)) ,callback)))))
+    `(setf ,@(loop for ((target &key method) callback) in routes
+                   append `((ningle:route ,app ,target :method ,(or method :GET)) ,callback)))))
 
 
 (defvar *view-name*)

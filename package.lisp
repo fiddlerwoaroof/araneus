@@ -2,12 +2,13 @@
 
 (defpackage #:araneus
   (:use #:cl #:fw.lu)
-  (:export #:defroutes  #:as-route  #:define-controller #:define-view    
-           #:controller #:view      #:run-route #:mustache-view    
-           #:render-mustache        #:define-spinneret-view
-           #:setf1      #:call-current-view
-           #:routes))
+  (:export #:defroutes             #:as-route        #:define-controller
+           #:define-view           #:controller      #:view
+           #:run-route             #:mustache-view   #:render-mustache
+           #:define-spinneret-view #:setf1           #:call-current-view
+           #:routes #:styles))
 
+#+fw.dev
 (defpackage #:araneus-2
   (:use #:cl #:fw.lu)
   (:export #:defroutes  #:as-route  #:define-controller #:define-view    
