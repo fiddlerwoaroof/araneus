@@ -2,6 +2,9 @@
 ;; views from controllers and make life more interesting.
 (in-package :araneus)
 
+(defclass mixin ()
+  ())
+
 (defgeneric run-route (name params &rest r)
   (:documentation "specialized on NAME with an EQL-specializer. This generic
                    function defines the way a specific route is to be processed"))
@@ -32,6 +35,8 @@
   (:method :around (app)
     (call-next-method)
     app))
+(defmethod initialize-instance :after ((instance mixin) &key)
+  (araneus:routes instance))
 
 (defmacro defroutes (app &body routes)
   "Define a set of routes for given paths. the ROUTES parameter expects this format:
@@ -45,7 +50,7 @@
 (defvar *view-name*)
 (defun call-current-view (model)
   "Call the currently running view with a new model.
-   
+
    Useful if one view name is specialized many times on different model classes: the controller can
    pass the container and then the view can recall itself on the contained items."
   (view *view-name* model))
@@ -136,6 +141,4 @@
     (alexandria:with-gensyms (model)
       `(define-view ,name (,model)
          (mustache (,template ,lambda-list ,model)
-                   ,@body)))))
-
-
+           ,@body)))))

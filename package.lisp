@@ -6,13 +6,14 @@
            #:define-view           #:controller      #:view
            #:run-route             #:mustache-view   #:render-mustache
            #:define-spinneret-view #:setf1           #:call-current-view
-           #:routes #:styles))
+           #:routes #:styles
+           #:mixin))
 
 #+fw.dev
 (defpackage #:araneus-2
   (:use #:cl #:fw.lu)
-  (:export #:defroutes  #:as-route  #:define-controller #:define-view    
-           #:controller #:view      #:run-route #:mustache-view    
+  (:export #:defroutes  #:as-route  #:define-controller #:define-view
+           #:controller #:view      #:run-route #:mustache-view
            #:render-mustache        #:define-spinneret-view
            #:setf1      #:call-current-view
            #:switch-view))
@@ -24,5 +25,3 @@
 (defpackage #:araneus.form
   (:use #:cl)
   (:export ))
-
-
