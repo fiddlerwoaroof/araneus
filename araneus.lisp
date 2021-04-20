@@ -19,6 +19,11 @@
                    renders the model picked out by the controller. Normally, this is
                    specialized using the DEFINE-VIEW macr"))
 
+(define-condition view-error (error)
+  ((%message :initarg :msg :reader msg))
+  (:default-initargs :msg "something's wrong")
+  (:report (lambda (condition stream)
+             (format stream "Error in view: ~a" (msg condition)))))
 
 (defgeneric styles (route)
   (:documentation "if you use class-based roues, this method provides
@@ -53,7 +58,9 @@
 
    Useful if one view name is specialized many times on different model classes: the controller can
    pass the container and then the view can recall itself on the contained items."
-  (view *view-name* model))
+  (if (boundp '*view-name*)
+      (view *view-name* model)
+      (error 'view-error :msg "Must call CALL-CURRENT-VIEW within a view")))
 
 (defmacro as-route (name &rest r &key &allow-other-keys)
   "Create a lambda directing requests to the route for NAME.  This uses the
