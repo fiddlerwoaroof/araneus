@@ -4,8 +4,7 @@
   :description "Another web framework"
   :author "Edward Langley <el@elangley.org>"
   :license "MIT"
-  :depends-on (#:anaphora
-               #:alexandria
+  :depends-on (#:alexandria
                #:serapeum
                #:ningle
                #:fwoar-lisputils

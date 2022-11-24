@@ -96,13 +96,16 @@
 
 (defmethod run-route (name params &rest r)
   (let ((*view-name* name))
-    (fw.lu:let-each (:be *)
-      (list* name params r)
-      (restart-bind ((switch-view (lambda (new-view)
-                                    (format t "~%SWITCHING VIEW: ~a" new-view)
-                                    (setf *view-name* new-view))))
-        (apply #'controller *))
-      (view *view-name* *))))
+    (let* ((* (list* name params r))
+           (*
+             (restart-bind
+                 ((switch-view
+                    (lambda (new-view)
+                      (format t "~%SWITCHING VIEW: ~a" new-view)
+                      (setf *view-name* new-view))))
+               (apply #'controller *))))
+      (let ((* (funcall 'view *view-name* *)))
+        *))))
 
 ; The default controller just passes its parameters directly to the view
 (defmethod controller (name params &key)
